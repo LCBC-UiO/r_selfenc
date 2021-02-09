@@ -6,7 +6,7 @@ Create a self-decrypting file for R using AES symmetric encryption. This one sin
 
 ### Encrypt
 
-Source `main.R` and call `encrypt_to_source(...)` with some objects to produce a self-encrypted R file.
+Source `main.R` and call `encrypt_to_source(...)` with some objects to produce a encrypted, self-decrypting R file.
 
 Example
 ```R
@@ -22,7 +22,7 @@ Example
 
 ### Decrypt
 
-Decryption is done by typing a single command in R. Just source the self-encrypted R file from an interactive R session (will prompt for the password).
+Decryption is done by typing a single command in R. Just source the self-decrypting R file from an interactive R session (will prompt for the password).
 
 Example
 ```R
@@ -36,4 +36,4 @@ Example
 ## TODO
 
  * change ECB to CBC
- * check if decryption was successful
+ * check if decryption was successful (handle wrong pw)
