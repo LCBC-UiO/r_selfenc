@@ -16,12 +16,13 @@ decrypt_from_raw <- function(r_enc) {
 
 #-------------------------------------------------------------------------------
 
-encrypt_to_source <- function(objects, password=NULL, key32=NULL, fn_out, on_decrypt=function(){cat("decryption successful\n")}) {
+encrypt_to_source <- function(objects, password=NULL, key32=NULL, 
+    fn_out, on_decrypt=function(){cat("decryption successful\n")}, envir=parent.frame()) {
   if (!is.null(password)) {
     key32 <- digest::digest(password, algo="sha256", raw=T)
   }
   zz <- textConnection("s_dump", "w")
-  dump(objects, file=zz)
+  dump(objects, file=zz, envir=envir)
   close(zz)
   r_dec <- charToRaw(paste(s_dump,collapse="\n"))
   # pad data
@@ -40,7 +41,7 @@ encrypt_to_source <- function(objects, password=NULL, key32=NULL, fn_out, on_dec
 
 #-------------------------------------------------------------------------------
 
-test() {
+test <- function() {
   # create test data
   test_1 <- data.frame(a=c(1,2),b=c("a","b"))
   test_2 <- function(x) {x*x / 10}
