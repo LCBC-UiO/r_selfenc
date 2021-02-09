@@ -28,6 +28,7 @@ Example
 ```R
   souce("/tmp/my_encrypted_sensitive_data.R")
 ```
+The decrypted objects will be loaded to your environment. Use `ls()` to list them.  
 
 ## Requirements
 
