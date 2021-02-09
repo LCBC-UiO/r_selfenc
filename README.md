@@ -13,14 +13,21 @@ Example
   test_1 <- data.frame(a=c(1,2),b=c("a","b"))
   test_2 <- function(x) {x*x / 10}
   
-  encrypt_to_source(c("test_1","test_2"), password="lcbc", fn_out="/tmp/my_encrypted_sensitive_data.R")
+  encrypt_to_source(
+    c("test_1","test_2"), 
+    password="lcbc", 
+    fn_out="/tmp/my_encrypted_sensitive_data.R"
+  )
 ```
 
 ### Decrypt
 
 Decryption is done by typing a single command in R. Just source the self-encrypted R file from an interactive R session (will prompt for the password).
 
-Example `souce("my_encrypted_sensitive_data.R")`
+Example
+```R
+  souce("/tmp/my_encrypted_sensitive_data.R")
+```
 
 ## Requirements
 
