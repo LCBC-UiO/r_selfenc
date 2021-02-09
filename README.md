@@ -15,7 +15,7 @@ Example
   
   encrypt_to_source(
     c("test_1","test_2"), 
-    password="lcbc", 
+    password=readline("choose a password:"), 
     fn_out="/tmp/my_encrypted_sensitive_data.R"
   )
 ```
