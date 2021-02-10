@@ -18,8 +18,34 @@ decrypt_from_raw <- function(r_enc) {
 
 #-------------------------------------------------------------------------------
 
+generate_pw <- function() {
+  paste(
+    sample(
+      unlist(
+        mapply(
+          sample
+          ,list(
+            a=letters
+            ,b=LETTERS
+            ,c=0:9
+            ,d=c("-","/","?","!","+","*")
+          ), c(3,3,2,2)
+        )
+      )
+    )
+    ,collapse=""
+  )
+}
+
+#-------------------------------------------------------------------------------
+
 encrypt_to_source <- function(objects, password=NULL, key32=NULL, 
     fn_out, on_decrypt=function(){cat("decryption successful\n")}, envir=parent.frame()) {
+  if (is.null(password) && is.null(key32)) {
+    # no key or pw ? -> generate pw
+    password <- generate_pw();
+    cat(sprintf("The password is \"%s\"\n", password))
+  }
   if (!is.null(password)) {
     key32 <- digest::digest(password, algo="sha256", raw=T)
   }
@@ -42,6 +68,7 @@ encrypt_to_source <- function(objects, password=NULL, key32=NULL,
   }
   # cleanup
   write(sprintf('rm("r_enc","decrypt_from_raw","on_decrypt")'), file=fn_out, append=TRUE)
+  invisible(password)
 }
 
 #-------------------------------------------------------------------------------
