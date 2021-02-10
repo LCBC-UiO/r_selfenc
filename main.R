@@ -48,11 +48,20 @@ encrypt_to_source <- function(objects, password=NULL, key32=NULL,
 
 test <- function() {
   # create test data
-  test_1 <- data.frame(a=c(1,2),b=c("a","b"))
-  test_2 <- function(x) {x*x / 10}
+  private_test_1 <- data.frame(a=c(1,2),b=c("a","b"))
+  private_test_2 <- function(x) {x*x / 10}
   # setup pw
   password <- "lcbc"
   key32 <- digest::digest(password, algo="sha256", raw=T)
   # write encryted file
-  encrypt_to_source(c("test_1","test_2"), key=key32, fn_out="/tmp/my_encrypted_sensitive_data.R", on_decrypt=function(){cat("decryption successful!\n")})
+  encrypt_to_source(
+    objects=c("private_test_1","private_test_2"),
+    key=key32,
+    fn_out="/tmp/my_encrypted_sensitive_data.R",
+    # run some function on the data at the end
+    on_decrypt=function(){
+      cat("decryption successful!\n")
+      cat(capture.output(summary(private_test_1)), sep="\n")
+    }
+  )
 }
