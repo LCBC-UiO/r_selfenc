@@ -6,16 +6,15 @@ Create a self-decrypting file for R using AES symmetric encryption. This one sin
 
 ### Encrypt
 
-Source `main.R` and call `encrypt_to_source(...)` with some objects to produce a encrypted, self-decrypting R file.
+Source `main.R` and call `encrypt_to_source(...)` with some objects to produce a encrypted, self-decrypting R file. A password is generated, if none is provided.
 
 Example
 ```R
-  test_1 <- data.frame(a=c(1,2),b=c("a","b"))
-  test_2 <- function(x) {x*x / 10}
+  private_test_1 <- data.frame(a=c(1,2),b=c("a","b"))
+  private_test_2 <- function(x) {x*x / 10}
   
   encrypt_to_source(
-    c("test_1","test_2"), 
-    password=readline("choose a password:"), 
+    c("private_test_1","private_test_2"),
     fn_out="/tmp/my_encrypted_sensitive_data.R"
   )
 ```
