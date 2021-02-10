@@ -10,6 +10,7 @@ decrypt_from_raw <- function(r_enc) {
   r_dec <- aes$decrypt(r_enc, raw=TRUE)
   # unpad data
   s_dump <- rawToChar(r_dec[r_dec>0])
+  # source decrypted dump
   zz <- textConnection(s_dump)
   source(zz)
   close(zz)
@@ -32,12 +33,15 @@ encrypt_to_source <- function(objects, password=NULL, key32=NULL,
   r_enc <- aes$encrypt(r_dec)
   dump("r_enc", file=fn_out)
   dump("decrypt_from_raw", file=fn_out, append=TRUE)
+  dump("on_decrypt", file=fn_out, append=TRUE)
+  # decrypt
+  write(sprintf("decrypt_from_raw(r_enc)"), file=fn_out, append=TRUE)
   if (!is.null(on_decrypt)) {
-    dump("on_decrypt", file=fn_out, append=TRUE)
-    write(sprintf("decrypt_from_raw(r_enc)"), file=fn_out, append=TRUE)
+    # callback
     write(sprintf("on_decrypt()"), file=fn_out, append=TRUE)
-    write(sprintf('rm("r_enc","decrypt_from_raw","on_decrypt")'), file=fn_out, append=TRUE)
   }
+  # cleanup
+  write(sprintf('rm("r_enc","decrypt_from_raw","on_decrypt")'), file=fn_out, append=TRUE)
 }
 
 #-------------------------------------------------------------------------------
