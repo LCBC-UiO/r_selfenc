@@ -3,7 +3,8 @@ stopifnot("digest" %in% installed.packages())
 #-------------------------------------------------------------------------------
 
 decrypt_from_raw <- function(r_enc) {
-  key32 <- digest::digest(readline("password:"), algo="sha256",raw=T)
+  stopifnot("digest" %in% installed.packages())
+  key32 <- digest::digest(readline("password:"), algo="sha256", raw=TRUE)
   # decrypt
   aes <- digest::AES(key32, mode="ECB")
   r_dec <- aes$decrypt(r_enc, raw=TRUE)
@@ -49,5 +50,5 @@ test <- function() {
   password <- "lcbc"
   key32 <- digest::digest(password, algo="sha256", raw=T)
   # write encryted file
-  encrypt_to_source(c("test_1","test_2"), key=key32, fn_out="/tmp/encsrc.R", on_decrypt=function(){cat("decryption successful!\n")})
+  encrypt_to_source(c("test_1","test_2"), key=key32, fn_out="/tmp/my_encrypted_sensitive_data.R", on_decrypt=function(){cat("decryption successful!\n")})
 }
