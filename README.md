@@ -6,7 +6,7 @@ Create a self-decrypting file for R using AES symmetric encryption. This one sin
 
 ### Encrypt
 
-Source `main.R` and call `encrypt_to_source(...)` with some objects to produce a encrypted, self-decrypting R file. A password is generated, if none is provided.
+Source `main.R` and call `encrypt_to_source(...)` with some objects to produce an encrypted, self-decrypting R file. A password is generated, if none is provided.
 
 Example
 ```R
@@ -34,6 +34,4 @@ The decrypted objects will be loaded to your environment. Use `ls()` to list the
  * digest package
 
 ## TODO
-
- * change ECB to CBC
  * check if decryption was successful (handle wrong pw)
