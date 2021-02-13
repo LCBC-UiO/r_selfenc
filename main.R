@@ -32,7 +32,9 @@ generate_pw <- function() {
             ,b=LETTERS
             ,c=0:9
             ,d=c("-","/","?","!","+","*")
-          ), c(3,3,2,2)
+          )
+          ,c(3,3,2,2)
+          ,MoreArgs = list(replace=TRUE)
         )
       )
     )
@@ -58,8 +60,8 @@ encrypt_to_source <- function(objects, password=NULL, key32=NULL,
   dump(objects, file=zz, envir=envir)
   close(zz)
   # pad data
-  r_dec <- charToRaw(paste(s_dump,collapse="\n"))
-  r_dec <- c(r_dec,as.raw(rep(0,16-length(r_dec)%%16)))
+  r_dec <- charToRaw(paste(s_dump, collapse="\n"))
+  r_dec <- c(r_dec, as.raw(rep(0, 16-length(r_dec) %% 16)))
   aes <- digest::AES(key32, mode="CBC", IV=iv)
   # dump enc with iv
   r_enc <- c(as.raw(iv), aes$encrypt(r_dec))
@@ -88,11 +90,11 @@ test <- function() {
   key32 <- digest::digest(password, algo="sha256", raw=T)
   # write encryted file
   encrypt_to_source(
-    objects=c("private_test_1","private_test_2"),
+    objects=c("private_test_1", "private_test_2"),
     key=key32,
     fn_out="/tmp/my_encrypted_sensitive_data.R",
     # run some function on the data at the end
-    on_decrypt=function(){
+    on_decrypt=function() {
       cat("decryption successful!\n")
       cat(capture.output(summary(private_test_1)), sep="\n")
     }
