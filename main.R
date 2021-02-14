@@ -6,10 +6,16 @@ decrypt_from_raw <- function(r_enc) {
   stopifnot("digest" %in% installed.packages())
   key32 <- digest::digest(readline("password:"), algo="sha256", raw=TRUE)
   # split iv from enc data
-  iv <- head(r_enc, n=16)
-  r_enc <- tail(r_enc, n=-16)
+  r_iv16 <- head(r_enc, n=16)
+  r_enc  <- tail(r_enc, n=-16)
+  # split hash
+  r_hash32 <- head(r_enc, n=32)
+  r_enc    <- tail(r_enc, n=-32)
+  if (any(digest::hmac(key32, r_enc, "sha256", raw=TRUE) != r_hash32)) {
+    stop("mismatching message authentication code: did you enter the correct password?")
+  }
   # decrypt
-  aes <- digest::AES(key32, mode="CBC", IV=iv)
+  aes <- digest::AES(key32, mode="CBC", IV=r_iv16)
   r_dec <- aes$decrypt(r_enc, raw=TRUE)
   # unpad data
   s_dump <- rawToChar(r_dec[r_dec>0])
@@ -48,23 +54,27 @@ encrypt_to_source <- function(objects, password=NULL, key32=NULL,
     fn_out, on_decrypt=function(){cat("decryption successful\n")}, envir=parent.frame()) {
   if (is.null(password) && is.null(key32)) {
     # no key or pw ? -> generate pw
-    password <- generate_pw();
+    password <- generate_pw()
     cat(sprintf("The password is \"%s\"\n", password))
   }
   if (!is.null(password)) {
-    key32 <- digest::digest(password, algo="sha256", raw=T)
+    key32 <- digest::digest(password, algo="sha256", raw=TRUE)
   }
-  iv <- sample(0:255, 16, replace=TRUE)
+  iv16 <- sample(0:255, 16, replace=TRUE)
   # create str from objects
   zz <- textConnection("s_dump", "w")
   dump(objects, file=zz, envir=envir)
   close(zz)
-  # pad data
   r_dec <- charToRaw(paste(s_dump, collapse="\n"))
+  # pad data
   r_dec <- c(r_dec, as.raw(rep(0, 16-length(r_dec) %% 16)))
-  aes <- digest::AES(key32, mode="CBC", IV=iv)
-  # dump enc with iv
-  r_enc <- c(as.raw(iv), aes$encrypt(r_dec))
+  aes <- digest::AES(key32, mode="CBC", IV=iv16)
+  # encrypt
+  r_enc <- aes$encrypt(r_dec)
+  # get hash
+  r_hash32 <- digest::hmac(key32, r_enc, "sha256", raw=TRUE)
+  # dump enc with iv and hash
+  r_enc <- c(as.raw(iv16), r_hash32, r_enc)
   dump("r_enc", file=fn_out)
   dump("decrypt_from_raw", file=fn_out, append=TRUE)
   dump("on_decrypt", file=fn_out, append=TRUE)

@@ -33,5 +33,3 @@ The decrypted objects will be loaded to your environment. Use `ls()` to list the
 
  * digest package
 
-## TODO
- * check if decryption was successful (handle wrong pw)
